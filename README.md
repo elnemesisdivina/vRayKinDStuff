@@ -36,14 +36,14 @@ This repo will try to explain the step zero towards the practice of K8s on your 
 ##### Container Registry
 [Harbor](https://goharbor.io/docs/2.2.0/install-config/)
 
-## Step 0 is to install `docker` on your mac
+**Step 0:** ## is to install `docker` on your mac
 `https://docs.docker.com/docker-for-mac/install/`
  ### Check if this fine (Client & Server)
 ```
 docker version
 ```
 
-## Step 1 the is not a special sauce just install `kubectl`
+**Step 1:** ## the is not a special sauce just install `kubectl`
 
 ```
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
