@@ -31,19 +31,19 @@ Continous Delivery
 
 # Work in progress
 Continous Delivery
-[Concurse](https://concourse-ci.org/)
+[Concourse](https://concourse-ci.org/)
 
 Container Registry
 [Harbor](https://goharbor.io/docs/2.2.0/install-config/)
 
 ## Step 0 is to install `docker` on your mac
 `https://docs.docker.com/docker-for-mac/install/`
- ### Check if this is ok
+ ### Check if this fine (Client & Server)
 ```
 docker version
 ```
 
-## Step 2 the is not a special sauce for this so assuming you already Install `kubectl`
+## Step 1 the is not a special sauce just install `kubectl`
 
 ```
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
