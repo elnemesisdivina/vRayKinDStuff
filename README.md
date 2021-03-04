@@ -15,16 +15,23 @@ K8s Management tool kit
 
 k8s apps manager
 [Helm](https://helm.sh/)
-[Kubeapps]
+[Kubeapps](https://kubeapps.com/)
 
 curated Apps catalog (Bitnami)
-[Tanzu Application Catalog]
+[Tanzu Application Catalog](https://bitnami.com/)
 
 Observability with steroids!
-[Tanzu Observability]
+[Tanzu Observability](https://docs.wavefront.com/)
 
 Policy enforcement adn K8s cluster managment:
-[Tanzu Mission Control]
+[Tanzu Mission Control](https://docs.vmware.com/en/VMware-Tanzu-Mission-Control/index.html)
 
 Continous Delivery 
-[ArgoCD]
+[ArgoCD](https://argoproj.github.io/argo-cd/)
+
+#Work in progress
+Continous Delivery
+[Concurse](https://concourse-ci.org/)
+
+Container Registry
+[Harbor](https://goharbor.io/docs/2.2.0/install-config/)
