@@ -29,9 +29,35 @@ Policy enforcement adn K8s cluster managment:
 Continous Delivery 
 [ArgoCD](https://argoproj.github.io/argo-cd/)
 
-#Work in progress
+# Work in progress
 Continous Delivery
 [Concurse](https://concourse-ci.org/)
 
 Container Registry
 [Harbor](https://goharbor.io/docs/2.2.0/install-config/)
+
+
+## Step zero the is not a special sauce for this so assuming you already Install the following :
+
+
+      `kubectl`
+
+```
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+
+chmod +x ./kubectl
+
+sudo mv ./kubectl /usr/local/bin/kubectl
+
+``` 
+
+ - Docker
+ - Kind
+ - Kubectl
+ -
+
+## Setting Up Kind on your Mac
+
+**Step 1:** 
+
+
