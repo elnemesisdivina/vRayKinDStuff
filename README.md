@@ -58,12 +58,12 @@ sudo mv ./kubectl /usr/local/bin/kubectl
  - Kind
  - Kubectl
  -
-**Step 2:** Check to make sure kubectl is running
+**Step 3:** Check to make sure kubectl is running
 
 `kubectl version --client`
 
 ## Setting Up Kind on your Mac
 
-**Step 1:** 
+**Step 4:** 
 
 
