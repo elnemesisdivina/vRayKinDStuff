@@ -36,8 +36,14 @@ Continous Delivery
 Container Registry
 [Harbor](https://goharbor.io/docs/2.2.0/install-config/)
 
+## Step 0 is to install `docker` on your mac
+`https://docs.docker.com/docker-for-mac/install/`
+ ### Check if this is ok
+```
+docker version
+```
 
-## Step zero the is not a special sauce for this so assuming you already Install `kubectl`
+## Step 2 the is not a special sauce for this so assuming you already Install `kubectl`
 
 ```
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
