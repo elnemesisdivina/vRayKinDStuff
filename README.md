@@ -37,10 +37,7 @@ Container Registry
 [Harbor](https://goharbor.io/docs/2.2.0/install-config/)
 
 
-## Step zero the is not a special sauce for this so assuming you already Install the following :
-
-
-      `kubectl`
+## Step zero the is not a special sauce for this so assuming you already Install `kubectl`
 
 ```
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
