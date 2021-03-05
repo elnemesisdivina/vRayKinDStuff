@@ -1450,6 +1450,41 @@ is the targeted Concourse running? better go catch it lol
 
 test netwokr poly deny all and check the trace from antrea plugin on octant
 
+```
+kubectl create -f "https://sesmxorg.tmc.cloud.vmware.com/installer?id=a9804e965cda72a326bdfd4ab57910f4419c9ca60e8722a5f989e46ca8a02a89&source=attach"
+namespace/vmware-system-tmc created
+configmap/stack-config created
+secret/tmc-access-secret created
+Warning: apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated in v1.16+, unavailable in v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition
+customresourcedefinition.apiextensions.k8s.io/agents.clusters.tmc.cloud.vmware.com created
+customresourcedefinition.apiextensions.k8s.io/extensionconfigs.intents.tmc.cloud.vmware.com created
+customresourcedefinition.apiextensions.k8s.io/extensionintegrations.clusters.tmc.cloud.vmware.com created
+customresourcedefinition.apiextensions.k8s.io/extensionresourceowners.clusters.tmc.cloud.vmware.com created
+customresourcedefinition.apiextensions.k8s.io/extensions.clusters.tmc.cloud.vmware.com created
+serviceaccount/extension-manager created
+clusterrole.rbac.authorization.k8s.io/extension-manager-role created
+clusterrolebinding.rbac.authorization.k8s.io/extension-manager-rolebinding created
+service/extension-manager-service created
+deployment.apps/extension-manager created
+serviceaccount/extension-updater-serviceaccount created
+podsecuritypolicy.policy/vmware-system-tmc-agent-restricted created
+clusterrole.rbac.authorization.k8s.io/vmware-system-tmc-psp-agent-restricted created
+Warning: rbac.authorization.k8s.io/v1beta1 ClusterRole is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 ClusterRole
+clusterrole.rbac.authorization.k8s.io/extension-updater-clusterrole created
+clusterrolebinding.rbac.authorization.k8s.io/vmware-system-tmc-psp-agent-restricted created
+Warning: rbac.authorization.k8s.io/v1beta1 ClusterRoleBinding is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 ClusterRoleBinding
+clusterrolebinding.rbac.authorization.k8s.io/extension-updater-clusterrolebinding created
+service/extension-updater created
+deployment.apps/extension-updater created
+serviceaccount/agent-updater created
+clusterrole.rbac.authorization.k8s.io/agent-updater-role created
+clusterrolebinding.rbac.authorization.k8s.io/agent-updater-rolebinding created
+deployment.apps/agent-updater created
+cronjob.batch/agentupdater-workload created
+
+```
+
+
 **Step 22:** Install [TO]
 
 do a tracing?
