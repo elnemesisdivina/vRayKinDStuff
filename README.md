@@ -604,7 +604,7 @@ Network range		- 172.18.0.0 - 172.18.255.255
 Usable range		- 172.18.0.1 - 172.18.255.254
 ```
 
-**Step 12:** Create the ConfigMap for MetalLB using `vi` getting the range of addresses to include from the values provided in the field, `Usable range` from the output of the previous step.
+**Step 12:** Create the ConfigMap for MetalLB using `vim` getting the range of addresses to include from the values provided in the field, `Usable range` from the output of the previous step.
 
 `vi metallb-config.yaml`
 
@@ -621,7 +621,7 @@ data:
   config: |
     address-pools:
     - name: default
-      protocol: layer2
+      protocol: layer2 #we are not going to peer at L3 at this point
       addresses:
       - 172.18.255.1-172.18.255.250
 
