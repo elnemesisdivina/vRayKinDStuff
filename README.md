@@ -1309,6 +1309,131 @@ Successfully tagged spring-petclinic:latest
 ![image](https://user-images.githubusercontent.com/5790758/110103529-a8173d00-7d6b-11eb-96db-70342860df0c.png)
 
 
+```
+➜  concourse-getting-started git:(master) ✗ cat pipelines/pipeline.yml| less
+➜  concourse-getting-started git:(master) ✗ vim pipelines/credentials.yml
+➜  concourse-getting-started git:(master) ✗ fly -t demo set-pipeline -c pipelines/pipeline.yml -p petclinic-tests -l pipelines/credentials.yml
+
+error: unknown target: demo
+➜  concourse-getting-started git:(master) ✗ fly -t vraydemo set-pipeline -c pipelines/pipeline.yml -p petclinic-tests -l pipelines/credentials.yml 
+
+resources:
+  resource spring-petclinic has been added:
++ name: spring-petclinic
++ source:
++   branch: test
++   uri: https://github.com/elnemesisdivina/spring-petclinic.git
++ type: git
+  
+  resource test-scripts has been added:
++ name: test-scripts
++ source:
++   branch: master
++   uri: https://github.com/elnemesisdivina/concourse-getting-started.git
++ type: git
+  
+  resource slack has been added:
++ name: slack
++ source:
++   url: https://hooks.slack.com/services/rest-of-url
++ type: slack-notification
+  
+resource types:
+  resource type slack-notification has been added:
++ name: slack-notification
++ source:
++   repository: cfcommunity/slack-notification-resource
++ type: docker-image
+  
+jobs:
+  job maven-test has been added:
++ name: maven-test
++ plan:
++ - get: spring-petclinic
++   trigger: true
++ - get: test-scripts
++ - params:
++     silent: true
++     text: starting job 'maven-test'
++   put: slack
++ - config:
++     image_resource:
++       name: ""
++       source:
++         repository: maven
++         tag: 3-jdk-11-openj9
++       type: docker-image
++     inputs:
++     - name: spring-petclinic
++     - name: test-scripts
++     platform: linux
++     run:
++       path: test-scripts/test-scripts/unit-test.sh
++   on_failure:
++     params:
++       silent: true
++       text: Task 'run-mvn-test' failed
++     put: slack
++   on_success:
++     params:
++       silent: true
++       text: Task 'run-mvn-test' succeeded
++     put: slack
++   task: run-mvn-test
++ public: true
++ serial: true
+  
+  job developer-tests has been added:
++ name: developer-tests
++ plan:
++ - get: spring-petclinic
++   passed:
++   - maven-test
++   trigger: true
++ - get: test-scripts
++ - params:
++     silent: true
++     text: starting job 'developer-tests'
++   put: slack
++ - config:
++     image_resource:
++       name: ""
++       source:
++         repository: maven
++         tag: 3-jdk-11-openj9
++       type: docker-image
++     inputs:
++     - name: spring-petclinic
++     - name: test-scripts
++     platform: linux
++     run:
++       path: test-scripts/test-scripts/developer-unit-test-01.sh
++   on_failure:
++     params:
++       silent: true
++       text: Taks 'run-developer-tests' failed
++     put: slack
++   on_success:
++     params:
++       silent: true
++       text: Task 'run-developer-tests' succeeded
++     put: slack
++   task: run-developer-tests
++ public: true
++ serial: true
+  
+pipeline name: petclinic-tests
+
+apply configuration? [yN]: y
+pipeline created!
+you can view your pipeline here: http://127.0.0.1:63933/teams/main/pipelines/petclinic-tests
+
+the pipeline is currently paused. to unpause, either:
+  - run the unpause-pipeline command:
+    fly -t vraydemo unpause-pipeline -p petclinic-tests
+  - click play next to the pipeline in the web ui
+
+```
 
 **Step 19:** Install robot app
 
