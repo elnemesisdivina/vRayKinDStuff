@@ -1444,6 +1444,9 @@ could not reach the Concourse server called vraydemo:
 is the targeted Concourse running? better go catch it lol
 ```
 
+![image](https://user-images.githubusercontent.com/5790758/110141666-027bc200-7d9b-11eb-8b4a-afcdf3b3a95c.png)
+
+
 **Step 19:** Install robot app
 
 **Step 21:** install [TMC]
