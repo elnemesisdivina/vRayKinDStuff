@@ -156,7 +156,7 @@ you acan apply the following manisfesto just TAG check release you wan in my cas
 
 `kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/<TAG>/antrea-kind.yml`
 
-**Step 5:** Install `Octant` and install  the `Antrea` `Octant`
+**Step 5:** Install `Octant` and install  the `Antrea` `Octant` plugin
 
 Install Octant on Mac
 
@@ -178,7 +178,6 @@ apply from recent clone `Antrea` repo as well, this will be useful for the `Antr
 so then move to the default octant plpugin folder:
 
 `mv antrea-octant-plugin-darwin-x86_64 ~/.config/octant/plugins/`
-
 
 export kubeconf
 
