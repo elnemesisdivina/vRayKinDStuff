@@ -1108,12 +1108,84 @@ repo to config
 
 ![image](https://user-images.githubusercontent.com/5790758/110093688-9da37600-7d60-11eb-83e9-b2e43c4f6e75.png)
 
-```
-**argocd app list
+```shell
+`argocd app list`
+
 NAME         CLUSTER                         NAMESPACE  PROJECT  STATUS  HEALTH   SYNCPOLICY  CONDITIONS  REPO                                                PATH   TARGET
 vraydemoapp  https://kubernetes.default.svc  default    default  Synced  Healthy  <none>      <none>      https://github.com/elnemesisdivina/cd-argo-tkg.git  yamls  HEAD
 ```
 test with nginx from repo editing replicas as a fancy SRE (Gitops) from github on yamls file of deployment
+
+##### Install Concourse 
+
+```shell
+
+git clone https://github.com/anthonyvetter/concourse-getting-started.git && cd concourse-getting-started
+
+export GH_USERNAME=elnemesisdivina
+vim install/values.yml
+helm repo add concourse https://concourse-charts.storage.googleapis.com/ && helm repo update
+```
+
+```shell
+NAME     	URL                                             
+bitnami  	https://charts.bitnami.com/bitnami              
+concourse	https://concourse-charts.storage.googleapis.com/
+```
+
+```
+kubectl config get-contexts 
+CURRENT   NAME           CLUSTER        AUTHINFO       NAMESPACE
+*         kind-ernesto   kind-ernesto   kind-ernesto   
+```
+
+`helm install concourse concourse/concourse -f install/values.yml`
+
+```NAME: concourse
+LAST DEPLOYED: Fri Mar  5 03:31:09 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+* Concourse can be accessed:
+
+  * Within your cluster, at the following DNS name at port 8080:
+
+    concourse-web.default.svc.cluster.local
+
+  * From outside the cluster, run these commands in the same shell:
+
+    export POD_NAME=$(kubectl get pods --namespace default -l "app=concourse-web" -o jsonpath="{.items[0].metadata.name}")
+    echo "Visit http://127.0.0.1:8080 to use Concourse"
+    kubectl port-forward --namespace default $POD_NAME 8080:8080
+* If this is your first time using Concourse, follow the examples at https://concourse-ci.org/examples.html
+
+*******************
+******WARNING******
+*******************
+
+You are using the "naive" baggage claim driver, which is also the default value for this chart.
+
+This is the default for compatibility reasons, but is very space inefficient, and should be changed to either "btrfs" (recommended) or "overlay" depending on that filesystem's support in the Linux kernel your cluster is using.
+
+Please see https://github.com/concourse/concourse/issues/1230 and https://github.com/concourse/concourse/issues/1966 for background.
+
+*******************
+******WARNING******
+*******************
+
+You're using the default "test" user with the default "test" password.
+
+Make sure you either disable local auth or change the combination to something more secure, preferably specifying a password in the bcrypted form.
+
+Please see `README.md` for examples.
+
+```
+
+![image](https://user-images.githubusercontent.com/5790758/110096413-80bc7200-7d63-11eb-9393-ada46db4b5b7.png)
+
+
 
 **Step 19:** Install robot app
 
