@@ -888,11 +888,185 @@ Cleanup
 
 **Step 16:** Install [Helm](https://helm.sh/)
 
+`helm repo add bitnami https://charts.bitnami.com/bitnami`
+
+```shell
+helm repo list
+NAME   	URL                               
+bitnami	https://charts.bitnami.com/bitnami
+```
+`kubectl create namespace kubeapps`
+
+```shell
+namespace/kubeapps created
+```
+
+
 **Step 17:** Install [Kubeapps]
 
-deploy wordpress from kubeapps using helm
+`helm install kubeapps --namespace kubeapps bitnami/kubeapps --set useHelm3=true`
+
+```
+W0305 01:52:08.394088   46169 warnings.go:70] apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated in v1.16+, unavailable in v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition
+W0305 01:52:10.402638   46169 warnings.go:70] apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated in v1.16+, unavailable in v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition
+NAME: kubeapps
+LAST DEPLOYED: Fri Mar  5 01:52:13 2021
+NAMESPACE: kubeapps
+STATUS: deployed
+REVISION: 1
+NOTES:
+** Please be patient while the chart is being deployed **
+
+Tip:
+
+  Watch the deployment status using the command: kubectl get pods -w --namespace kubeapps
+
+Kubeapps can be accessed via port 80 on the following DNS name from within your cluster:
+
+   kubeapps.kubeapps.svc.cluster.local
+
+To access Kubeapps from outside your K8s cluster, follow the steps below:
+
+1. Get the Kubeapps URL by running these commands:
+   echo "Kubeapps URL: http://127.0.0.1:8080"
+   kubectl port-forward --namespace kubeapps service/kubeapps 8080:80
+
+2. Open a browser and access Kubeapps using the obtained URL.
+```
+
+on step 1. you can leverage of Octant to make this to happen in an easy way:
+
+![image](https://user-images.githubusercontent.com/5790758/110084922-1cdf7c80-7d56-11eb-88c3-7beb01e24a98.png)
+
+
+then edit the Service for kubeapps:
+
+![image](https://user-images.githubusercontent.com/5790758/110085000-31237980-7d56-11eb-85f9-c28592d7a0ae.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110085042-3da7d200-7d56-11eb-9b3a-815142eae7e4.png)
+
+the first time you will be ask about the token to authenticate wiht API cluster:
+![image](https://user-images.githubusercontent.com/5790758/110085120-57e1b000-7d56-11eb-8342-db45d27b48bc.png)
+
+first create a service account :
+
+`kubectl create serviceaccount kubeapps-operator`
+
+```shell
+serviceaccount/kubeapps-operator created
+```
+then create the `clusterrolebinding`
+
+`kubectl create clusterrolebinding kubeapps-operator --clusterrole=cluster-admin --serviceaccount=default:kubeapps-operator`
+
+```shell
+clusterrolebinding.rbac.authorization.k8s.io/kubeapps-operator created
+```
+thenk get teh token:
+`kubectl get secret $(kubectl get serviceaccount kubeapps-operator -o jsonpath='{range .secrets[*]}{.name}{"\n"}{end}' | grep kubeapps-operator-token) -o jsonpath='{.data.token}' -o go-template='{{.data.token | base64decode}}' && echo`
+
+output example
+
+```shell
+eyJhbGciOiJSUzI1NiIsImtpZCI6Il9yRzV4QlExMnBRMTFxZVJUamJKUWZzVUhjU1ZKcURXSC1UZWpuTHlYMFEifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6Imt1YmVhcHBzLW9wZXJhdG9yLXRva2VuLWhjNmxqIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6Imt1YmVhcHBzLW9wZXJhdG9yIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYjUxNDQxOWEtOWQ3Yy00MjJhLWFmMzMtMzA1M2IyMGFlODVkIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRlZmF1bHQ6a3ViZWFwcHMtb3BlcmF0b3IifQ.L93aSNI4M36L3OcZyAr0Oc9ATJx1aG5o7oaHFHVk7nv1lHhTYu0xwzQa9SdESaWeMiR2m543Qig2hptsqCQ0PDyYIpv8mkjVzWKUdC-eRmQBDD76iDkb8FU5UQmWkBjfYxoeX_09pG7Tj1kvBRwmBDjIz3wgpjiFfQ9Uw0FqqbWCaPl-5vIQ4L8gX26__OdQWxLLG4Az2quXhH4XczsxMufUAEDrgC8XqBnFlK6qjFda3VXSRNt51cq0ZuZL_B-AL3M9YqN6f6vCLzZCyilpgQi7wv6q3hYjgTn6UseXZgqHJQW8MMS4k8KoHGg3lg23e0X-6G7ocH-7CUG7RWn9SQ
+```
+then enter the token and will see something like this:
+
+![image](https://user-images.githubusercontent.com/5790758/110085815-2e755400-7d57-11eb-97df-6a49e2fbe32a.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086109-92981800-7d57-11eb-8425-12431d9311bb.png)
+
+
+
+deploy wordpress from kubeapps 
+
+![image](https://user-images.githubusercontent.com/5790758/110086277-ca06c480-7d57-11eb-8154-4b2f747ae998.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086330-d9860d80-7d57-11eb-8613-19d5763562e9.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086491-0afed900-7d58-11eb-9b69-d590c4998bc5.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086754-60d38100-7d58-11eb-808e-20a976e4ebab.png)
+
+
+![image](https://user-images.githubusercontent.com/5790758/110086714-5618ec00-7d58-11eb-8f4b-072d72a64435.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086890-90828900-7d58-11eb-9dfd-2be93ccf5564.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110086981-adb75780-7d58-11eb-880a-f5b0bf788d90.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110087048-c32c8180-7d58-11eb-980a-7de30b87a99f.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110087652-890faf80-7d59-11eb-859d-5ef012da2149.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110088301-50bca100-7d5a-11eb-9718-5dbaf917e875.png)
+
 
 **Step 18:** Install [ARgoCD] and [Concourse]
+`kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml`
+
+```
+namespace/argocd created
+Warning: apiextensions.k8s.io/v1beta1 CustomResourceDefinition is deprecated in v1.16+, unavailable in v1.22+; use apiextensions.k8s.io/v1 CustomResourceDefinition
+customresourcedefinition.apiextensions.k8s.io/applications.argoproj.io created
+customresourcedefinition.apiextensions.k8s.io/appprojects.argoproj.io created
+serviceaccount/argocd-application-controller created
+serviceaccount/argocd-dex-server created
+serviceaccount/argocd-redis created
+serviceaccount/argocd-server created
+role.rbac.authorization.k8s.io/argocd-application-controller created
+role.rbac.authorization.k8s.io/argocd-dex-server created
+role.rbac.authorization.k8s.io/argocd-redis created
+role.rbac.authorization.k8s.io/argocd-server created
+clusterrole.rbac.authorization.k8s.io/argocd-application-controller created
+clusterrole.rbac.authorization.k8s.io/argocd-server created
+rolebinding.rbac.authorization.k8s.io/argocd-application-controller created
+rolebinding.rbac.authorization.k8s.io/argocd-dex-server created
+rolebinding.rbac.authorization.k8s.io/argocd-redis created
+rolebinding.rbac.authorization.k8s.io/argocd-server created
+clusterrolebinding.rbac.authorization.k8s.io/argocd-application-controller created
+clusterrolebinding.rbac.authorization.k8s.io/argocd-server created
+configmap/argocd-cm created
+configmap/argocd-gpg-keys-cm created
+configmap/argocd-rbac-cm created
+configmap/argocd-ssh-known-hosts-cm created
+configmap/argocd-tls-certs-cm created
+secret/argocd-secret created
+service/argocd-dex-server created
+service/argocd-metrics created
+service/argocd-redis created
+service/argocd-repo-server created
+service/argocd-server created
+service/argocd-server-metrics created
+deployment.apps/argocd-dex-server created
+deployment.apps/argocd-redis created
+deployment.apps/argocd-repo-server created
+deployment.apps/argocd-server created
+statefulset.apps/argocd-application-controller created
+```
+![image](https://user-images.githubusercontent.com/5790758/110089241-7a29fc80-7d5b-11eb-9c5d-dc0392c636f5.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110090000-6763f780-7d5c-11eb-8751-6f3b1dd4c1be.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110090114-882c4d00-7d5c-11eb-936a-fedfc3c2e501.png)
+
+default password `admin` and password is the name create for server pod
+`kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2`
+
+output example:
+```shell
+argocd-server-69678b4f65-jqwx9
+```
+![image](https://user-images.githubusercontent.com/5790758/110090566-0f79c080-7d5d-11eb-8842-9ac8f65ef267.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110090642-1f91a000-7d5d-11eb-85d0-b7a678214410.png)
+
+optional install argo CLI
+
+
+repo to config
+`https://github.com/elnemesisdivina/cd-argo-tkg/tree/master/yamls`
 
 test with nginx from repo
 
@@ -910,3 +1084,4 @@ do a tracing?
 
 create a global NS and do a GLB between two kind clusters
 
+**Step 24:** Use [Harbor]
