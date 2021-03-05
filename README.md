@@ -1,12 +1,12 @@
 # vRayKinDStuff
-This repo will try to explain the step zero towards the practice of K8s on your own mac :) folks with Linux distro can follow as jsut some commands need to be adapted. all of this based on this list:
+This repo will try to explain the step zero towards the practice of K8s on your own mac :) folks with Linux distro can follow as just some commands need to be adapted. all of this based on this list:
 
 ##### K8s clusters on Docker Containers
 -[KinD](https://kind.sigs.k8s.io/)
 ##### CNI
 -[Antrea](https://antrea.io/)
 ##### L4 LB
--[MetalLB Load Balancer](https://metallb.universe.tf/)
+-[MetalLB](https://metallb.universe.tf/)
 ##### K8s Management tool kit
 -[Octant](https://reference.octant.dev/?path=/docs/docs-intro--page#getting-started)
 #### k8s apps manager
@@ -25,19 +25,23 @@ This repo will try to explain the step zero towards the practice of K8s on your 
 -[Concourse](https://concourse-ci.org/)
 ##### Container Registry
 -[Harbor](https://goharbor.io/docs/2.2.0/install-config/)
+-[Tanzu Service Mesh]
 
 ## Setting Up Kind on your Mac
 
 **Step 0:** is to install `docker` on your mac
+
 `https://docs.docker.com/docker-for-mac/install/`
- ##### Check if this fine (Client & Server)
+
+##### Check if this fine (Client & Server)
+
 ```
 docker version
 ```
 
 **Step 1:** the is not a special sauce just install `kubectl`
 
-```
+```shell
 curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
 
 chmod +x ./kubectl
@@ -55,15 +59,18 @@ sudo mv ./kubectl /usr/local/bin/kubectl
 `kubectl version --client --short`
 
 ourput example:
-```
+
+```shell
 Client Version: v1.20.0
 ```
 **Step 4:** Install [KinD](https://kind.sigs.k8s.io/)
-```
+
+```shell
 brew install kind
 ```
 or 
-```
+
+```shell
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.10.0/kind-darwin-amd64
 
 ```
@@ -91,6 +98,7 @@ nodes: #set 1 master and 3 worker nodes
 `kind create cluster --name ernesto --config antrea-config.yaml`
 
 Output fo this command example:
+
 ```
 Creating cluster "ernesto" ...
  ✓ Ensuring node image (kindest/node:v1.19.1) 🖼 
@@ -111,7 +119,8 @@ run to check your recent create Docker cntrs aka Kubernetes Nodes:
 
 `docker ps`
 
-```add name ernesto output
+```shell
+add name ernesto output
 CONTAINER ID        IMAGE                  COMMAND                  CREATED              STATUS              PORTS                       NAMES
 b7e28a6d0493        kindest/node:v1.19.1   "/usr/local/bin/entr…"   About a minute ago   Up About a minute                               ernesto-worker
 ...
@@ -119,7 +128,12 @@ b7e28a6d0493        kindest/node:v1.19.1   "/usr/local/bin/entr…"   About a mi
 ```
 
 `kind get clusters`
-add output of ernesto
+
+output example:
+
+```
+ernesto
+```
 
 `kubectl config view`
 
@@ -154,7 +168,7 @@ excecute teh fix to the nodes:
 
 output sample:
 
-```
+```shell
 kind get nodes --name antreakind | xargs ./kind-fix-networking.sh 
 Disabling TX checksum offload for node antreakind-worker (veth9016bb5)
 Actual changes:
@@ -185,7 +199,8 @@ you acan apply the following manisfesto just TAG check release you wan in my cas
 `kubectl apply -f https://github.com/vmware-tanzu/antrea/releases/download/v0.12.0/antrea-kind.yml`
 
 output sample:
-```
+
+```shell
 customresourcedefinition.apiextensions.k8s.io/antreaagentinfos.clusterinformation.antrea.tanzu.vmware.com created
 customresourcedefinition.apiextensions.k8s.io/antreacontrollerinfos.clusterinformation.antrea.tanzu.vmware.com created
 customresourcedefinition.apiextensions.k8s.io/clusternetworkpolicies.security.antrea.tanzu.vmware.com created
@@ -221,8 +236,10 @@ validatingwebhookconfiguration.admissionregistration.k8s.io/crdvalidator.antrea.
 
 ```
 check the agent and Ccontroller from `Antrea`
+
 `kubectl get pods -n kube-system | grep antrea`
-```
+
+```shell
 antrea-agent-b5kpf                                 2/2     Running   0          3m16s
 antrea-agent-zfkh9                                 2/2     Running   0          3m16s
 antrea-controller-94889cf46-v6rnm                  1/1     Running   0          3m16s
@@ -246,7 +263,8 @@ also check that coredns pods will change from `Pending` to `Running` state due t
 `kubectl exec -n kube-system -it pod/antrea-agent-b5kpf -- ls /`
 
 output sample:
-```
+
+```shell
 Defaulting container name to antrea-agent.
 Use 'kubectl describe pod/antrea-agent-b5kpf -n kube-system' to see all of the containers in this pod.
 bin   dev  home  lib	lib64	media  opt   root  sbin  sys  usr
@@ -259,7 +277,7 @@ boot  etc  host  lib32	libx32	mnt    proc  run   srv	 tmp  var
 
 sample output:
 
-```
+```shell
 Defaulting container name to antrea-agent.
 Use 'kubectl describe pod/antrea-agent-b5kpf -n kube-system' to see all of the containers in this pod.
 
@@ -295,7 +313,7 @@ Flags:
 ***v): run this command `ovs-<TAB>` to check all options of ovs commands
 
 output example
-```
+```shell
 ovs-appctl           ovs-docker           ovs-dpctl-top        ovs-parse-backtrace  ovs-pki              ovs-tcpundump        ovs-vsctl            
 ovs-bugtool          ovs-dpctl            ovs-ofctl            ovs-pcap             ovs-tcpdump          ovs-vlan-test        ovs-vswitchd  
 
@@ -309,7 +327,7 @@ or from terminal we can directly exceute teh command in the container with this 
 
 output example:
 
-```
+```shell
 d01fff9d-faf3-439f-bb1e-42fe3cfb40a4
     Bridge br-int
         datapath_type: system
@@ -339,7 +357,7 @@ d01fff9d-faf3-439f-bb1e-42fe3cfb40a4
 
 output example:
 
-```
+```shell
 antrea-gw0
 antrea-tun0
 coredns--975ed0
@@ -358,7 +376,7 @@ coredns--975ed0
 ------------------------------
 ##### short list of what I used during my exploration and tests
 -----------------------------
-```
+```shell
 ovs-ofctl show br-int
 ovs-ofctl dump-ports br-int
 ovs-vsctl list-br
@@ -390,7 +408,7 @@ ovs-ofctl del-flows br-int in_port=1
 `ip -c a`
 
 example output
-```
+```shell
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -477,7 +495,7 @@ deploy from manifest:
 `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.5/manifests/metallb.yaml`
 
 output example
-```
+```shell
 podsecuritypolicy.policy/controller created
 podsecuritypolicy.policy/speaker created
 serviceaccount/controller created
@@ -493,14 +511,14 @@ rolebinding.rbac.authorization.k8s.io/pod-lister created
 daemonset.apps/speaker created
 deployment.apps/controller created
 ```
-check pod creatin with this command:
+check pod creation with this command:
 
-`kubectl -n metallb-system get all`
+`kubectl -n metallb-system get pods`
 
 output example:
 
-```
-kubectl -n metallb-system get pods
+```shell
+
 NAME                              READY   STATUS                       RESTARTS   AGE
 pod/controller-65db86ddc6-5zqrf   1/1     Running                      0          57s
 pod/speaker-8cjtq                 0/1     CreateContainerConfigError   0          57s
@@ -516,7 +534,7 @@ then check again statu of Metal LB pods
 
 example output
 
-```
+```shell
 kubectl -n metallb-system get pods
 
 NAME                              READY   STATUS    RESTARTS   AGE
@@ -531,7 +549,7 @@ pod/speaker-9gmzm                 1/1     Running   0          2m24s
 
 You'll get output similar to the following:
 
-```
+```shell
 NAME                 STATUS   ROLES    AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                                     KERNEL-VERSION      CONTAINER-RUNTIME
 ernesto-control-plane   Ready    master   5m23s   v1.19.1   172.18.0.4    <none>        Ubuntu Groovy Gorilla (development branch)   4.4.0-185-generic   containerd://1.4.0
 ernesto-worker          Ready    <none>   4m42s   v1.19.1   172.18.0.3    <none>        Ubuntu Groovy Gorilla (development branch)   4.4.0-185-generic   containerd://1.4.0
@@ -544,7 +562,7 @@ ernesto-worker2         Ready    <none>   4m41s   v1.19.1   172.18.0.2    <none>
 
 You'll get output similar to the following
 
-```
+```shell
 .
 .
 .
@@ -568,7 +586,7 @@ using `sipcalc` we can have the range from CIDR to use for the LB depoending on 
 
 output example:
 
-```
+```shell
 -[ipv4 : 172.18.0.1/16] - 0
 
 [CIDR]
@@ -622,7 +640,8 @@ data:
 `kubectl create deploy nginx --image nginx`
 
 output example:
-```
+
+```shell
 NAME                         READY   STATUS              RESTARTS   AGE
 pod/nginx-6799fc88d8-zsmdt   0/1     ContainerCreating   0          2s
 ```
@@ -638,7 +657,7 @@ chekc if this is ok:
 
 output example:
 
-```
+```shell
 NAME                         READY   STATUS    RESTARTS   AGE
 pod/nginx-6799fc88d8-zsmdt   1/1     Running   0          91s
 
