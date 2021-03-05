@@ -1,5 +1,5 @@
 # vRayKinDStuff
-This repo will try to explain the step zero towards the practice of K8s on your own mac :) folks with Linux distro can follow as just some commands need to be adapted. all of this based on this list:
+This repo (is NOT perfect) will try to explain the step zero towards the practice of K8s on your own mac :) folks with Linux distro can follow as just some commands need to be adapted. all of this based on this list:
 
 ##### K8s clusters on Docker Containers
 -[KinD](https://kind.sigs.k8s.io/)
