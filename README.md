@@ -1435,6 +1435,14 @@ the pipeline is currently paused. to unpause, either:
 
 ```
 
+```
+could not reach the Concourse server called vraydemo:
+
+    Get "http://127.0.0.1:63933/api/v1/info": read tcp 127.0.0.1:51337->127.0.0.1:63933: read: connection reset by peer
+
+is the targeted Concourse running? better go catch it lol
+```
+
 **Step 19:** Install robot app
 
 **Step 21:** install [TMC]
