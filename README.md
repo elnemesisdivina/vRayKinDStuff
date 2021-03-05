@@ -101,20 +101,20 @@ nodes: #set 1 master and 3 worker nodes
 
 Output fo this command example:
 
-```
+```shell
 Creating cluster "ernesto" ...
  ✓ Ensuring node image (kindest/node:v1.19.1) 🖼 
- ✓ Preparing nodes 📦 📦 📦
+ ✓ Preparing nodes 📦 📦 📦 📦  
  ✓ Writing configuration 📜 
  ✓ Starting control-plane 🕹️ 
- ✓ Installing CNI 🔌 
  ✓ Installing StorageClass 💾 
+ ✓ Joining worker nodes 🚜 
 Set kubectl context to "kind-ernesto"
 You can now use your cluster with:
 
 kubectl cluster-info --context kind-ernesto
 
-Thanks for using kind! 😊
+Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
 ```
 
 run to check your recent create Docker cntrs aka Kubernetes Nodes:
@@ -122,36 +122,77 @@ run to check your recent create Docker cntrs aka Kubernetes Nodes:
 `docker ps`
 
 ```shell
-add name ernesto output
-CONTAINER ID        IMAGE                  COMMAND                  CREATED              STATUS              PORTS                       NAMES
-b7e28a6d0493        kindest/node:v1.19.1   "/usr/local/bin/entr…"   About a minute ago   Up About a minute                               ernesto-worker
-...
-2a1d1484f828        kindest/node:v1.19.1   "/usr/local/bin/entr…"   About a minute ago   Up About a minute   127.0.0.1:45109->6443/tcp   ernesto-control-plane
+CONTAINER ID   IMAGE                  COMMAND                  CREATED         STATUS         PORTS                       NAMES
+7964d8be4147   kindest/node:v1.19.1   "/usr/local/bin/entr…"   2 minutes ago   Up 2 minutes   127.0.0.1:55961->6443/tcp   ernesto-control-plane
+6950cf5d06b8   kindest/node:v1.19.1   "/usr/local/bin/entr…"   2 minutes ago   Up 2 minutes                               ernesto-worker2
+049e84df4540   kindest/node:v1.19.1   "/usr/local/bin/entr…"   2 minutes ago   Up 2 minutes                               ernesto-worker3
+0c742cd2e5cf   kindest/node:v1.19.1   "/usr/local/bin/entr…"   2 minutes ago   Up 2 minutes                               ernesto-worker
 ```
 
 `kind get clusters`
 
 output example:
 
-```
+```shell
 ernesto
 ```
 
 `kubectl config view`
 
+```shell
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://127.0.0.1:55961
+  name: kind-ernesto
+contexts:
+- context:
+    cluster: kind-ernesto
+    user: kind-ernesto
+  name: kind-ernesto
+current-context: kind-ernesto
+kind: Config
+preferences: {}
+users:
+- name: kind-ernesto
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+```
 #Export kubeconfig of new created cluster on kind
 
 `export KUBECONFIG="$(kind get kubeconfig --name="ernesto")"`
 
 
-`kubectl config view`
-
 `kubectl get nodes`
+
+```shell
+NAME                    STATUS     ROLES    AGE     VERSION
+ernesto-control-plane   NotReady   master   3m12s   v1.19.1
+ernesto-worker          NotReady   <none>   2m38s   v1.19.1
+ernesto-worker2         NotReady   <none>   2m37s   v1.19.1
+ernesto-worker3         NotReady   <none>   2m37s   v1.19.1
+```
 
 `kubectl get pods -A`
 
+```shell
+NAMESPACE            NAME                                            READY   STATUS    RESTARTS   AGE
+kube-system          coredns-f9fd979d6-7bbs5                         0/1     Pending   0          3m45s
+kube-system          coredns-f9fd979d6-r9lz4                         0/1     Pending   0          3m45s
+kube-system          etcd-ernesto-control-plane                      1/1     Running   0          3m58s
+kube-system          kube-apiserver-ernesto-control-plane            1/1     Running   0          3m58s
+kube-system          kube-controller-manager-ernesto-control-plane   1/1     Running   0          3m58s
+kube-system          kube-proxy-5ttl4                                1/1     Running   0          3m32s
+kube-system          kube-proxy-pqsgg                                1/1     Running   0          3m33s
+kube-system          kube-proxy-r2t6j                                1/1     Running   0          3m45s
+kube-system          kube-proxy-vk9qd                                1/1     Running   0          3m32s
+kube-system          kube-scheduler-ernesto-control-plane            1/1     Running   0          3m58s
+local-path-storage   local-path-provisioner-78776bfc44-9kw74         0/1     Pending   0          3m45s
+```
 
-Just in case you need it this is the way to delete the cluster 
+***** Just in case you need it this is the way to delete the cluster 
 
 `kind delete cluster --name ernesto`
 
@@ -166,13 +207,12 @@ cloning the `Antrea` Repo
 
 excecute teh fix to the nodes:
 
-`kind get nodes --name antreakind | xargs ~/antrea/hack/kind-fix-networking.sh`
+`kind get nodes --name ernesto | xargs ~/antrea/hack/kind-fix-networking.sh`
 
 output sample:
 
 ```shell
-kind get nodes --name antreakind | xargs ./kind-fix-networking.sh 
-Disabling TX checksum offload for node antreakind-worker (veth9016bb5)
+Disabling TX checksum offload for node ernesto-control-plane (veth9e3b089)
 Actual changes:
 tx-checksumming: off
 	tx-checksum-ip-generic: off
@@ -183,7 +223,29 @@ tcp-segmentation-offload: off
 	tx-tcp-mangleid-segmentation: off [requested on]
 	tx-tcp6-segmentation: off [requested on]
 net.ipv4.tcp_retries2 = 4
-Disabling TX checksum offload for node antreakind-control-plane (veth3af0c96)
+Disabling TX checksum offload for node ernesto-worker2 (veth0e96cf2)
+Actual changes:
+tx-checksumming: off
+	tx-checksum-ip-generic: off
+	tx-checksum-sctp: off
+tcp-segmentation-offload: off
+	tx-tcp-segmentation: off [requested on]
+	tx-tcp-ecn-segmentation: off [requested on]
+	tx-tcp-mangleid-segmentation: off [requested on]
+	tx-tcp6-segmentation: off [requested on]
+net.ipv4.tcp_retries2 = 4
+Disabling TX checksum offload for node ernesto-worker3 (veth4191ff6)
+Actual changes:
+tx-checksumming: off
+	tx-checksum-ip-generic: off
+	tx-checksum-sctp: off
+tcp-segmentation-offload: off
+	tx-tcp-segmentation: off [requested on]
+	tx-tcp-ecn-segmentation: off [requested on]
+	tx-tcp-mangleid-segmentation: off [requested on]
+	tx-tcp6-segmentation: off [requested on]
+net.ipv4.tcp_retries2 = 4
+Disabling TX checksum offload for node ernesto-worker (veth2aeab04)
 Actual changes:
 tx-checksumming: off
 	tx-checksum-ip-generic: off
@@ -242,13 +304,11 @@ check the agent and Ccontroller from `Antrea`
 `kubectl get pods -n kube-system | grep antrea`
 
 ```shell
-antrea-agent-b5kpf                                 2/2     Running   0          3m16s
-antrea-agent-zfkh9                                 2/2     Running   0          3m16s
-antrea-controller-94889cf46-v6rnm                  1/1     Running   0          3m16s
-etcd-antreakind-control-plane                      1/1     Running   0          9m42s
-kube-apiserver-antreakind-control-plane            1/1     Running   0          9m42s
-kube-controller-manager-antreakind-control-plane   1/1     Running   0          9m42s
-kube-scheduler-antreakind-control-plane            1/1     Running   0          9m42s
+antrea-agent-5ts7b                              2/2     Running   0          14m
+antrea-agent-6hklz                              2/2     Running   0          14m
+antrea-agent-8xtb8                              2/2     Running   0          14m
+antrea-agent-wksqp                              2/2     Running   0          14m
+antrea-controller-94889cf46-9whh8               1/1     Running   0          14m
 ```
 also check that coredns pods will change from `Pending` to `Running` state due to plumbing to communications between them
 
@@ -258,32 +318,68 @@ also check that coredns pods will change from `Pending` to `Running` state due t
 
 `kubectl get all -n kube-system` 
 
+```shell
+NAME                                                READY   STATUS    RESTARTS   AGE
+pod/antrea-agent-5ts7b                              2/2     Running   0          15m
+pod/antrea-agent-6hklz                              2/2     Running   0          15m
+pod/antrea-agent-8xtb8                              2/2     Running   0          15m
+pod/antrea-agent-wksqp                              2/2     Running   0          15m
+pod/antrea-controller-94889cf46-9whh8               1/1     Running   0          15m
+pod/coredns-f9fd979d6-7bbs5                         1/1     Running   0          23m
+pod/coredns-f9fd979d6-r9lz4                         1/1     Running   0          23m
+pod/etcd-ernesto-control-plane                      1/1     Running   0          23m
+pod/kube-apiserver-ernesto-control-plane            1/1     Running   0          23m
+pod/kube-controller-manager-ernesto-control-plane   1/1     Running   0          23m
+pod/kube-proxy-5ttl4                                1/1     Running   0          22m
+pod/kube-proxy-pqsgg                                1/1     Running   0          22m
+pod/kube-proxy-r2t6j                                1/1     Running   0          23m
+pod/kube-proxy-vk9qd                                1/1     Running   0          22m
+pod/kube-scheduler-ernesto-control-plane            1/1     Running   0          23m
+
+NAME               TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE
+service/antrea     ClusterIP   10.96.83.166   <none>        443/TCP                  15m
+service/kube-dns   ClusterIP   10.96.0.10     <none>        53/UDP,53/TCP,9153/TCP   23m
+
+NAME                          DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR            AGE
+daemonset.apps/antrea-agent   4         4         4       4            4           kubernetes.io/os=linux   15m
+daemonset.apps/kube-proxy     4         4         4       4            4           kubernetes.io/os=linux   23m
+
+NAME                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/antrea-controller   1/1     1            1           15m
+deployment.apps/coredns             2/2     2            2           23m
+
+NAME                                          DESIRED   CURRENT   READY   AGE
+replicaset.apps/antrea-controller-94889cf46   1         1         1       15m
+replicaset.apps/coredns-f9fd979d6             2         2         2       23m
+```
+
 ***ii):select one of the `antrea-agent-xxxxx` pod 
+
+`antrea-agent-5ts7b`
 
 ***iii):and run this command:
 
-`kubectl exec -n kube-system -it pod/antrea-agent-b5kpf -- ls /`
+`kubectl exec -n kube-system -it pod/antrea-agent-5ts7b -- ls /`
 
 output sample:
 
 ```shell
 Defaulting container name to antrea-agent.
-Use 'kubectl describe pod/antrea-agent-b5kpf -n kube-system' to see all of the containers in this pod.
+Use 'kubectl describe pod/antrea-agent-5ts7b -n kube-system' to see all of the containers in this pod.
 bin   dev  home  lib	lib64	media  opt   root  sbin  sys  usr
 boot  etc  host  lib32	libx32	mnt    proc  run   srv	 tmp  var
 
 ```
 ***iv):enter in shell of agent to play with `OVS` with this command:
 
-`kubectl exec -n kube-system -it pod/antrea-agent-b5kpf -- /bin/bash`
+`kubectl exec -n kube-system -it pod/antrea-agent-5ts7b -- /bin/bash`
 
 sample output:
 
 ```shell
 Defaulting container name to antrea-agent.
-Use 'kubectl describe pod/antrea-agent-b5kpf -n kube-system' to see all of the containers in this pod.
-
-root@antreakind-control-plane:/# antrea-agent --help
+Use 'kubectl describe pod/antrea-agent-5ts7b -n kube-system' to see all of the containers in this pod.
+root@ernesto-worker3:/# antrea-agent --help
 The Antrea agent runs on each node.
 
 Usage:
@@ -307,9 +403,6 @@ Flags:
   -v, --v Level                          number for the log level verbosity
       --version                          version for antrea-agent
       --vmodule moduleSpec               comma-separated list of pattern=N settings for file-filtered logging
-,,,,,,,,,,
-,,,,,,,,,,
-,,,,,,,,,, 
 ```
 
 ***v): run this command `ovs-<TAB>` to check all options of ovs commands
@@ -330,18 +423,7 @@ or from terminal we can directly exceute teh command in the container with this 
 output example:
 
 ```shell
-d01fff9d-faf3-439f-bb1e-42fe3cfb40a4
-    Bridge br-int
-        datapath_type: system
-        Port antrea-gw0
-            Interface antrea-gw0
-                type: internal
-        Port antrea-tun0
-            Interface antrea-tun0
-                type: geneve
-                options: {csum="true", key=flow, remote_ip=flow}
-        Port coredns--975ed0
-            Interface coredns--975ed0
+341952bb-9d54-4afe-8575-d190d9c46f04
     Bridge br-phy
         fail_mode: standalone
         datapath_type: netdev
@@ -350,12 +432,21 @@ d01fff9d-faf3-439f-bb1e-42fe3cfb40a4
         Port br-phy
             Interface br-phy
                 type: internal
+    Bridge br-int
+        datapath_type: netdev
+        Port antrea-tun0
+            Interface antrea-tun0
+                type: geneve
+                options: {csum="true", key=flow, remote_ip=flow}
+        Port antrea-gw0
+            Interface antrea-gw0
+                type: internal
     ovs_version: "2.14.0"
 ```
 
 ***vii): list all ports on OVS `Bridge`
 
-`ovs-vsctl list-port br-int`
+`ovs-vsctl list-ports br-int`
 
 output example:
 
@@ -417,25 +508,25 @@ example output
        valid_lft forever preferred_lft forever
     inet6 ::1/128 scope host 
        valid_lft forever preferred_lft forever
-2: ovs-netdev: <BROADCAST,MULTICAST,PROMISC> mtu 1500 qdisc noop state DOWN group default qlen 1000
-    link/ether 66:20:56:e6:18:21 brd ff:ff:ff:ff:ff:ff
-3: br-phy: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 1000
+2: tunl0@NONE: <NOARP> mtu 1480 qdisc noop state DOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+3: ip6tnl0@NONE: <NOARP> mtu 1452 qdisc noop state DOWN group default qlen 1000
+    link/tunnel6 :: brd ::
+4: ovs-netdev: <BROADCAST,MULTICAST,PROMISC> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether d2:db:53:ae:4e:81 brd ff:ff:ff:ff:ff:ff
+5: br-phy: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UNKNOWN group default qlen 1000
     link/ether 02:42:ac:12:00:02 brd ff:ff:ff:ff:ff:ff
     inet 172.18.0.2/16 scope global br-phy
        valid_lft forever preferred_lft forever
-5: coredns--975ed0@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc noqueue master ovs-system state UP group default 
-    link/ether 56:af:b7:bc:a1:b6 brd ff:ff:ff:ff:ff:ff link-netnsid 1
-6: ovs-system: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
-    link/ether c2:d0:42:47:9a:9b brd ff:ff:ff:ff:ff:ff
-7: genev_sys_6081: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65000 qdisc noqueue master ovs-system state UNKNOWN group default qlen 1000
-    link/ether 7e:6f:3c:4c:84:6f brd ff:ff:ff:ff:ff:ff
-8: antrea-gw0: <BROADCAST,MULTICAST> mtu 1450 qdisc noop state DOWN group default qlen 1000
-    link/ether ca:83:4c:9f:48:01 brd ff:ff:ff:ff:ff:ff
-9: eth0@if10: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
+6: antrea-gw0: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1450 qdisc pfifo_fast state UNKNOWN group default qlen 1000
+    link/ether 32:68:3a:5a:d5:44 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.2.1/24 brd 192.168.2.255 scope global antrea-gw0
+       valid_lft forever preferred_lft forever
+15: eth0@if16: <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default 
     link/ether 02:42:ac:12:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
 ```
 
-**Step 5:** Install `Octant` and install  the `Antrea` `Octant` plugin
+**Step 5:** Install `Octant` and install  the `Antrea Octant` plugin
 
 Install Octant on Mac
 
@@ -445,12 +536,31 @@ Clone Octant git repo,
 
 `git clone https://github.com/vmware-tanzu/octant.git`
 
+plugins included for test
 Build an `Octant` test plugin `https://reference.octant.dev/?path=/docs/docs-plugins-2-go-plugins--page`
 
 `cd octant`
+
 `go run build.go install-test-plugin`
 
-apply from recent clone `Antrea` repo as well, this will be useful for the `Antrea` `Octant` Plugin or get from this link
+sample output
+
+```shell
+2021/03/05 00:59:13 Plugin path: /Users/rcastaneda/.config/octant/plugins
+2021/03/05 00:59:13 Running: /usr/local/bin/go build -o /Users/rcastaneda/.config/octant/plugins/octant-sample-plugin github.com/vmware-tanzu/octant/cmd/octant-sample-plugin
+```
+
+verify installation of test plugin
+
+
+`ls $HOME/.config/octant/plugin/`
+
+```
+octant-sample-plugin
+```
+
+#### `Antrea Octant` Plugin
+apply from recent clone `Antrea` repo as well, this will be useful for the `Antrea Octant` Plugin or get from this link
 
 `https://github.com/vmware-tanzu/antrea/releases/download/v0.12.2/antrea-octant-plugin-darwin-x86_64`
 
@@ -464,12 +574,43 @@ export kubeconf
 
 run `Octant` from terminal
 
+output example
+```shell
 `Octant`
 
+2021-03-05T01:07:13.876-0600	INFO	dash/watcher.go:116	watching config file	{"component": "config-watcher", "config": "/Users/rcastaneda/.kube/config"}
+2021-03-05T01:07:13.879-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/cronJob", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/suspendCronJob", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/resumeCronJob", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/containerEditor", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "overview/startPortForward", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "overview/stopPortForward", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/cordon", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/apply", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/deploymentConfiguration", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/serviceEditor", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/uncordon", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/update", "module-name": "overview"}
+2021-03-05T01:07:13.880-0600	INFO	module/manager.go:83	registering action	{"component": "module-manager", "actionPath": "action.octant.dev/deleteObject", "module-name": "configuration"}
+2021-03-05T01:07:13.882-0600	INFO	plugin/manager.go:372	watching for new JavaScript plugins in ["/Users/rcastaneda/.config/octant/plugins"]
+2021-03-05T01:07:14.312-0600	INFO	plugin/manager.go:634	registering plugin action	{"plugin-name": "antrea-octant-plugin-darwin-x86_64", "action-path": "traceflow/addTf"}
+2021-03-05T01:07:14.313-0600	INFO	plugin/manager.go:634	registering plugin action	{"plugin-name": "antrea-octant-plugin-darwin-x86_64", "action-path": "traceflow/showGraphAction"}
+2021-03-05T01:07:14.313-0600	INFO	plugin/manager.go:647	registered plugin "antrea-octant-plugin"	{"plugin-name": "antrea-octant-plugin-darwin-x86_64", "cmd": "/Users/rcastaneda/.config/octant/plugins/antrea-octant-plugin-darwin-x86_64", "metadata": {"Name":"antrea-octant-plugin","Description":"Antrea","Capabilities":{"IsModule":true,"ActionNames":["traceflow/addTf","traceflow/showGraphAction"]}}}
+2021-03-05T01:07:14.313-0600	INFO	plugin/manager.go:655	plugin supports navigation	{"plugin-name": "antrea-octant-plugin-darwin-x86_64"}
+2021-03-05T01:07:14.725-0600	INFO	plugin/manager.go:634	registering plugin action	{"plugin-name": "octant-sample-plugin", "action-path": "action.octant.dev/example"}
+2021-03-05T01:07:14.725-0600	INFO	plugin/manager.go:647	registered plugin "plugin-name"	{"plugin-name": "octant-sample-plugin", "cmd": "/Users/rcastaneda/.config/octant/plugins/octant-sample-plugin", "metadata": {"Name":"plugin-name","Description":"a description","Capabilities":{"SupportsPrinterConfig":[{"Group":"","Version":"v1","Kind":"Pod"}],"SupportsTab":[{"Group":"","Version":"v1","Kind":"Pod"}],"IsModule":true,"ActionNames":["action.octant.dev/example"]}}}
+2021-03-05T01:07:14.725-0600	INFO	plugin/manager.go:655	plugin supports navigation	{"plugin-name": "octant-sample-plugin"}
+2021-03-05T01:07:16.971-0600	INFO	dash/dash.go:596	using api service
+2021-03-05T01:07:16.971-0600	INFO	dash/dash.go:505	Dashboard is available at http://127.0.0.1:7777
+```
+this will open in auto a web page on your browser 
+
+![image](https://user-images.githubusercontent.com/5790758/110080028-890ab200-7d4f-11eb-875c-8c0501f72885.png)
 
 
 
-==========k9s ==========
+
+==========Optional k9s UI in terminal==========
 snap install k9s  # if you already using ver. 20 of ubuntu as in my case snap comes as default
 
 check by invoke k9s from cli, if fails check doing this export for config file:
@@ -482,7 +623,27 @@ other issue is the permission on .k9s: permissions denied try this:
 
 ============================================
 
-**Step 6:** Install [MetalLB](https://metallb.universe.tf/)
+**Step 6:** Install [MetalLB](https://metallb.universe.tf/) this works as a charm in Linux
+**** since this is your sand box you can work with `NodePort` service for your local Pods to expose them, sometimes for Security paranoid reasons the process to make exposure of `docker network` on MAc will force to use some "hacks" to make it work, and will be a challenge to make it work with those restrictions ****
+`https://kind.sigs.k8s.io/docs/user/loadbalancer/`
+
+```shell
+git:(master) ✗  kubectl explain service.spec.externalTrafficPolicy
+KIND:     Service
+VERSION:  v1
+
+FIELD:    externalTrafficPolicy <string>
+
+DESCRIPTION:
+     externalTrafficPolicy denotes if this Service desires to route external
+     traffic to node-local or cluster-wide endpoints. "Local" preserves the
+     client source IP and avoids a second hop for LoadBalancer and Nodeport type
+     services, but risks potentially imbalanced traffic spreading. "Cluster"
+     obscures the client source IP and may cause a second hop to another node,
+     but should have good overall load-spreading.
+```
+
+
 
 Create namespace:
 
