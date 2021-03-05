@@ -28,6 +28,7 @@ This repo will try to explain the step zero towards the practice of K8s on your 
 -[Tanzu Service Mesh]
 ##### Other cluster with cillium CNI
 ##### Experiment with Multus
+##### Add ingress Controller
 
 ## Setting Up Kind on your Mac
 
