@@ -1064,11 +1064,56 @@ argocd-server-69678b4f65-jqwx9
 
 optional install argo CLI
 
+`brew install argocd`
+
+then login 
+
+```shell
+argocd login localhost:63075
+WARNING: server certificate had error: x509: certificate signed by unknown authority. Proceed insecurely (y/n)? Y
+Username: admin
+Password: 
+'admin' logged in successfully
+Context 'localhost:63075' updated
+```
+![image](https://user-images.githubusercontent.com/5790758/110091872-8e232d80-7d5e-11eb-8c2a-8104e76e0011.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110091922-a09d6700-7d5e-11eb-8460-022bde85ee8b.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110091967-aeeb8300-7d5e-11eb-8353-627efece9c89.png)
 
 repo to config
-`https://github.com/elnemesisdivina/cd-argo-tkg/tree/master/yamls`
+`https://github.com/elnemesisdivina/cd-argo-tkg.git`
 
-test with nginx from repo
+![image](https://user-images.githubusercontent.com/5790758/110092313-1570a100-7d5f-11eb-8bd8-0a6e5c0ad784.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110092368-24575380-7d5f-11eb-8910-d7022563432d.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110092487-44871280-7d5f-11eb-80f4-9f34a94ccbbd.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093345-3be30c00-7d60-11eb-913d-4eeee788bdb2.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093383-47363780-7d60-11eb-8bbb-f655c37186de.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093419-51583600-7d60-11eb-9be9-81d7c4561291.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093520-6d5bd780-7d60-11eb-8f54-87d0b860adb3.png)
+
+
+![image](https://user-images.githubusercontent.com/5790758/110093575-7cdb2080-7d60-11eb-8a95-18903b4e7aa2.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093613-88c6e280-7d60-11eb-9e1c-42161401921e.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093664-954b3b00-7d60-11eb-8a6f-95482d8c62ad.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110093688-9da37600-7d60-11eb-83e9-b2e43c4f6e75.png)
+
+```
+**argocd app list
+NAME         CLUSTER                         NAMESPACE  PROJECT  STATUS  HEALTH   SYNCPOLICY  CONDITIONS  REPO                                                PATH   TARGET
+vraydemoapp  https://kubernetes.default.svc  default    default  Synced  Healthy  <none>      <none>      https://github.com/elnemesisdivina/cd-argo-tkg.git  yamls  HEAD
+```
+test with nginx from repo editing replicas as a fancy SRE (Gitops) from github on yamls file of deployment
 
 **Step 19:** Install robot app
 
