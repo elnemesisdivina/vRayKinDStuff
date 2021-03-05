@@ -1242,6 +1242,72 @@ Receiving objects: 100% (8561/8561), 7.27 MiB | 2.19 MiB/s, done.
 Resolving deltas: 100% (3245/3245), done.
 ```
 
+create your own app image `docker build optional/. -t spring-petclinic`
+```shell
+ckitoContextCustomizer@6f0a15b5, org.springframework.boot.test.autoconfigure.OverrideAutoConfigurationContextCustomizerFactory$DisableAutoConfigurationContextCustomizer@7f57a7a4, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@45f6181a, org.springframework.boot.test.autoconfigure.filter.TypeExcludeFiltersContextCustomizer@fda632a4, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@c91f835, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@5243d730, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@0], resourceBasePath = 'src/main/webapp', contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]], class annotated with @DirtiesContext [false] with mode [null].
+10:23:16.824 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTestContextBootstrapper=true}
+
+
+              |\      _,,,--,,_
+             /,`.-'`'   ._  \-;;,_
+  _______ __|,4-  ) )_   .;.(__`'-'__     ___ __    _ ___ _______
+ |       | '---''(_/._)-'(_\_)   |   |   |   |  |  | |   |       |
+ |    _  |    ___|_     _|       |   |   |   |   |_| |   |       | __ _ _
+ |   |_| |   |___  |   | |       |   |   |   |       |   |       | \ \ \ \
+ |    ___|    ___| |   | |      _|   |___|   |  _    |   |      _|  \ \ \ \
+ |   |   |   |___  |   | |     |_|       |   | | |   |   |     |_    ) ) ) )
+ |___|   |_______| |___| |_______|_______|___|_|  |__|___|_______|  / / / /
+ ==================================================================/_/_/_/
+
+:: Built with Spring Boot :: 2.4.2
+
+
+2021-03-05 10:23:22.197  INFO 219 --- [           main] o.s.s.petclinic.vet.VetControllerTests   : Starting VetControllerTests using Java 1.8.0_181 on 31995bb4ff71 with PID 219 (start
+
+....
+
+Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-compress/1.19/commons-compress-1.19.jar (615 kB at 394 kB/s)
+[INFO] Building jar: /app/target/spring-petclinic-2.4.2.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.4.2:repackage (repackage) @ spring-petclinic ---
+[INFO] Replacing main artifact with repackaged archive
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 21:33 min
+[INFO] Finished at: 2021-03-05T10:25:38Z
+[INFO] ------------------------------------------------------------------------
+Removing intermediate container 31995bb4ff71
+ ---> d0a5975deada
+Step 8/11 : FROM openjdk:8-jre-alpine
+8-jre-alpine: Pulling from library/openjdk
+e7c96db7181b: Pull complete 
+f910a506b6cb: Pull complete 
+b6abafe80f63: Pull complete 
+Digest: sha256:f362b165b870ef129cbe730f29065ff37399c0aa8bcab3e44b51c302938c9193
+Status: Downloaded newer image for openjdk:8-jre-alpine
+ ---> f7a292bbb70c
+Step 9/11 : WORKDIR /app
+ ---> Running in 49e588b61a93
+Removing intermediate container 49e588b61a93
+ ---> f7000d6b2e4a
+Step 10/11 : COPY --from=1 /app/target/*.jar /app
+ ---> 28358668fbf6
+Step 11/11 : CMD ["java","-jar","spring-petclinic-2.2.0.BUILD-SNAPSHOT.jar"]
+ ---> Running in 265e9f587892
+Removing intermediate container 265e9f587892
+ ---> b138724d2015
+Successfully built b138724d2015
+Successfully tagged spring-petclinic:latest
+
+```
+
+`docker tag spring-petclinic elnemesisdivina/spring-petclinic:latest`
+
+`docker push elnemesisdivina/spring-petclinic`
+
+![image](https://user-images.githubusercontent.com/5790758/110103529-a8173d00-7d6b-11eb-96db-70342860df0c.png)
+
 
 
 **Step 19:** Install robot app
