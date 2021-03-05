@@ -660,7 +660,7 @@ replicaset.apps/nginx-6799fc88d8   1         1         1       91s
 
 You'll get out put similar to the following:
 
-```
+```shell
 NAME                 TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)        AGE
 service/kubernetes   ClusterIP      10.96.0.1      <none>         443/TCP        7h45m
 service/nginx        LoadBalancer   10.96.75.187   172.18.255.1   80:31725/TCP   4s
@@ -707,16 +707,24 @@ Cleanup
 **Step 16:** Install [Helm](https://helm.sh/)
 
 **Step 17:** Install [Kubeapps]
+
 deploy wordpress from kubeapps using helm
-**Step 18:** Install [ARgoCD]
+
+**Step 18:** Install [ARgoCD] and [Concourse]
+
 test with nginx from repo
+
 **Step 19:** Install robot app
 
-**Step 21:** install TMC
+**Step 21:** install [TMC]
+
 test netwokr poly deny all and check the trace from antrea plugin on octant
 
-**Step 22:** Install TO
+**Step 22:** Install [TO]
+
 do a tracing?
-**Step 23:** Install TSM
+
+**Step 23:** Install [TSM]
+
 create a global NS and do a GLB between two kind clusters
 
