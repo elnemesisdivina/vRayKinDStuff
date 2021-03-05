@@ -27,6 +27,7 @@ This repo will try to explain the step zero towards the practice of K8s on your 
 -[Harbor](https://goharbor.io/docs/2.2.0/install-config/)
 -[Tanzu Service Mesh]
 ##### Other cluster with cillium CNI
+##### Experiment with Multus
 
 ## Setting Up Kind on your Mac
 
