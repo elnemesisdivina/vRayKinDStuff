@@ -1116,7 +1116,7 @@ vraydemoapp  https://kubernetes.default.svc  default    default  Synced  Healthy
 ```
 test with nginx from repo editing replicas as a fancy SRE (Gitops) from github on yamls file of deployment
 
-##### Install Concourse 
+##### Install [Concourse](https://concourse-ci.org/quick-start.html)
 
 ```shell
 
@@ -1133,7 +1133,7 @@ bitnami  	https://charts.bitnami.com/bitnami
 concourse	https://concourse-charts.storage.googleapis.com/
 ```
 
-```
+```shell
 kubectl config get-contexts 
 CURRENT   NAME           CLUSTER        AUTHINFO       NAMESPACE
 *         kind-ernesto   kind-ernesto   kind-ernesto   
@@ -1141,7 +1141,8 @@ CURRENT   NAME           CLUSTER        AUTHINFO       NAMESPACE
 
 `helm install concourse concourse/concourse -f install/values.yml`
 
-```NAME: concourse
+```shell
+NAME: concourse
 LAST DEPLOYED: Fri Mar  5 03:31:09 2021
 NAMESPACE: default
 STATUS: deployed
@@ -1186,6 +1187,62 @@ Please see `README.md` for examples.
 ![image](https://user-images.githubusercontent.com/5790758/110096413-80bc7200-7d63-11eb-9393-ada46db4b5b7.png)
 
 
+![image](https://user-images.githubusercontent.com/5790758/110097396-954d3a00-7d64-11eb-822e-fdb42b4ae6a3.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110097451-a8600a00-7d64-11eb-9380-5d63af033601.png)
+
+
+to expose use this command `./install/expose-concourse.sh` or from octant
+
+![image](https://user-images.githubusercontent.com/5790758/110097660-ebba7880-7d64-11eb-82c0-795ee6985b10.png)
+
+![image](https://user-images.githubusercontent.com/5790758/110097778-0bea3780-7d65-11eb-9d37-21200bb49a35.png)
+
+download fly and move to $PATH
+`chmod +x fly && mv fly /usr/local/bin`
+```shell
+fly -version
+7.0.0
+```
+![image](https://user-images.githubusercontent.com/5790758/110098901-51f3cb00-7d66-11eb-968e-c6352bffdc85.png)
+
+`fly --target vraydemo login --concourse-url http://127.0.0.1:63933 -u test -p test`
+
+```shell
+fly --target vraydemo login --concourse-url http://127.0.0.1:639333 -u test -p test
+logging in to team 'main'
+
+could not reach the Concourse server called vraydemo:
+
+    Get "http://127.0.0.1:639333/api/v1/info": dial tcp: address 639333: invalid port
+
+is the targeted Concourse running? better go catch it lol #so funny .i.
+
+➜  ~ fly --target vraydemo login --concourse-url http://127.0.0.1:63933 -u test -p test 
+logging in to team 'main'
+
+
+target saved
+
+
+```
+
+```shell
+ fly -t vraydemo sync
+version 7.0.0 already matches; skipping
+```
+
+```
+git clone https://github.com/$GH_USERNAME/spring-petclinic.git && cd spring-petclinic
+
+Cloning into 'spring-petclinic'...
+remote: Enumerating objects: 8561, done.
+remote: Total 8561 (delta 0), reused 0 (delta 0), pack-reused 8561
+Receiving objects: 100% (8561/8561), 7.27 MiB | 2.19 MiB/s, done.
+Resolving deltas: 100% (3245/3245), done.
+```
+
+
 
 **Step 19:** Install robot app
 
@@ -1198,6 +1255,7 @@ test netwokr poly deny all and check the trace from antrea plugin on octant
 do a tracing?
 
 **Step 23:** Install [TSM]
+and use Ingress controller
 
 create a global NS and do a GLB between two kind clusters
 
